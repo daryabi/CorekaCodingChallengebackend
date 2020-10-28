@@ -1,0 +1,103 @@
+<?php  include('server.php'); ?>
+<?php 
+	if (isset($_GET['edit'])) {
+		$id = $_GET['edit'];
+		$update = true;
+		$record = mysqli_query($db, "SELECT * FROM bixbey WHERE id=$id");
+
+		if (count($record) == 1 ) {
+			$n = mysqli_fetch_array($record);
+			$name = $n['name'];
+			$address = $n['address'];
+		}
+	}
+?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+
+    <title>Pixbey</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <?php if (isset($_SESSION['message'])): ?>
+    <div class="msg">
+        <?php 
+			echo $_SESSION['message']; 
+			unset($_SESSION['message']);
+		?>
+    </div>
+    <?php endif ?>
+
+    <?php $results = mysqli_query($db, "SELECT * FROM bixbey"); ?>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Client name</th>
+                <th>Project Size</th>
+                <!-- <th>Contact</th> -->
+                <th>Contact</th>
+                <th>Email</th>
+
+
+                <!-- <th>Massage</th>
+                <th>Address</th> -->
+                <th colspan="2">Action</th>
+            </tr>
+        </thead>
+
+        <?php while ($row = mysqli_fetch_array($results)) { ?>
+        <?php
+$date = new DateTime($row['DataTime']);
+$num1 = $row['BudgetRange'];
+// echo number_format($num1);
+$num2 = $row['BudgetRangeTo'];
+// echo number_format($num2);
+
+?>
+        <tr>
+            <td><?php echo $date->format('d/m/Y ');  ?></td>
+            <td><?php echo $date->format('H:i'); ?></td>
+            <td><?php echo $row['name']; ?></td>
+            <td><?php echo number_format($num1);  ?> - <?php echo number_format($num2);  ?></td>
+
+            <td><?php echo $row['Contact']; ?></td>
+            <td><?php echo $row['Email']; ?></td>
+
+            <td>
+                <a href="index.php?edit=<?php echo $row['id']; ?>" class="edit_btn">Edit</a>
+            </td>
+            <td>
+                <a href="server.php?del=<?php echo $row['id']; ?>" class="del_btn">Delete</a>
+            </td>
+
+        </tr>
+
+        <?php } ?>
+    </table>
+
+    <div class="center">
+        <button> <a href="Add.php">Add project details</a></button>
+    </div>
+
+</body>
+
+</html>
